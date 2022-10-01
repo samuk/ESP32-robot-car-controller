@@ -3,7 +3,7 @@
 #include <WiFiClientSecure.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-
+#include <Smartcar.h>
 #include "utility.h"
 
 #include "device/device.h"
