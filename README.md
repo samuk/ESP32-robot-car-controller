@@ -29,7 +29,7 @@ You can watch a project demo [here](https://photos.app.goo.gl/gQUQkC9ZNbU3YpYm9)
 
 ## How to test the web-page
 1. upload the firmware to any ESP32 controller using PlatformIO;
-2. upload the filesystem image to your ESP32. If you don't know how to do it [here is a guide](https://randomnerdtutorials.com/esp32-vs-code-platformio-spiffs/);
+2. upload the filesystem image to your ESP32. If you don't know how to do it [here is a guide](https://randomnerdtutorials.com/esp32-vs-code-platformio-spiffs/); If on Arm see also: https://community.platformio.org/t/cant-build-filesystem-image-sh-1-mkspiffs-espressif32-arduino-not-found-error-127/19295/4 command is:  pio run -t uploadfs 
 3. using any device connect to a new wi-fi access point. It will be called **esp_robot_1** and will have password **password_1**;
 5. open any browser and go to 192.168.4.1;
 6. plary around!
