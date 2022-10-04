@@ -125,6 +125,8 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
     {
 //Original      uart_message[1] = 1 + 97;
 //I2C version???
+	  if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 4)!=4) { // 0 is the motor number
+	  if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 4)!=4) { // 1 is the motor number
     }
     else if (direction_1 == 'D') //Backwards
     {
@@ -138,7 +140,9 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
     else
     {
 //Original      uart_message[1] = 0 + 97;
-//I2C version ???
+//I2C version ???  if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 0)!=0) { // 0 is the motor number
+	  if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 0)!=0) { // 1 is the motor number
+	      if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 0)!=0) { // 0 is the motor number
     }
 
     if (direction_2 == 'L') //left
