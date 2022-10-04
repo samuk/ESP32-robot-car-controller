@@ -61,13 +61,6 @@ void setup() {
 //Orignial UART message
 uint8_t uart_message[3] = {97, 0, 0};
 
-//Example I2C commander command that needs to replace the UART stuff below
-//uint8_t status[4];
-//int numRead = commander.readRegister(0, REG_STATUS, status, 4); // 0 is the motor number
-
-//if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 4)!=4) { // 0 is the motor number
-// TODO handle I2C error
-//}
 
 void loop()
 {
@@ -98,7 +91,17 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   else if (type == WS_EVT_DISCONNECT)
   {
     Serial.println("Client disconnected");
-
+	  
+	  
+//Example I2C commander command that needs to replace the UART stuff below
+//uint8_t status[4];
+//int numRead = commander.readRegister(0, REG_STATUS, status, 4); // 0 is the motor number
+//if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 4)!=4) { // 0 is the motor number
+//}
+	  
+	  
+	  
+//do nothing if disconnected
     uart_message[1] = 0 + 97;
     uart_message[2] = 0 + 97;
   }
