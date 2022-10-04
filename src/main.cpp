@@ -55,7 +55,8 @@ void setup() {
        Serial.println("I2C failed to initialize");
         delay(1000);
     }
-    commander.addI2CMotors(TARGET_I2C_ADDRESS, 1); // only one motor in my test setup - *Need to add a second motor
+    commander.addI2CMotors(TARGET_I2C_ADDRESS, 0); // only one motor in my test setup - *Need to add a second motor
+    commander.addI2CMotors(TARGET_I2C_ADDRESS, 1); // Not sure if I've done this correctly
     commander.init();
     Serial.println("I2C Commander intialized.");
 }
