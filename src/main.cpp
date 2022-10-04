@@ -109,6 +109,7 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 //    uart_message[1] = 0 + 97;
 //    uart_message[2] = 0 + 97;
 // I2C version???
+	 	  
   }
   else if (type == WS_EVT_DATA) // receive text from client
   {
@@ -125,6 +126,9 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
     {
 //Original      uart_message[1] = 2 + 97;
 //I2C version????
+    if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 4)!=4) { // 0 is the motor number
+    }
+	 
     }
     else
     {
