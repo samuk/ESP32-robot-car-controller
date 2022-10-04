@@ -7,6 +7,8 @@
 #include "device/device.h"
 #include "device/device_web_server.h"
 #include "device/device_global_variables.h"
+#include <ESPmDNS.h>
+#include <Smartcar.h>
 #include <Wire.h>
 #include <SimpleFOC.h>
 #include "SimpleFOCDrivers.h"
@@ -20,15 +22,10 @@ AsyncWebSocket ws("/ws");
 
 
 #define TARGET_I2C_ADDRESS 0x60
-#include <ESPmDNS.h>
-#include <Smartcar.h>
 #define I2C_SDA 21
 #define I2C_SCL 22
 #define I2C_Freq 100000UL
 
-
-// our RosmoESC's address...
-//#define TARGET_I2C_ADDRESS 0x60
 
 
 // global instance of commander - controller device version
@@ -61,21 +58,16 @@ void setup() {
 }
 
 
+//Orignial UART message
+uint8_t uart_message[3] = {97, 0, 0};
+
 //Example I2C commander command that needs to replace the UART stuff below
 //uint8_t status[4];
 //int numRead = commander.readRegister(0, REG_STATUS, status, 4); // 0 is the motor number
 
 //if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 4)!=4) { // 0 is the motor number
-        // TODO handle I2C error
+// TODO handle I2C error
 //}
-
-
-
-//below from original
-
-uint8_t uart_message[3] = {97, 0, 0};
-
-
 
 void loop()
 {
