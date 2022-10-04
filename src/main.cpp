@@ -163,7 +163,10 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
     else
     {
 //Original      uart_message[2] = 0 + 97;
-//I2C version ??
+//I2C version ??  
+	  if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 0)!=0) { // 0 is the motor number
+	  if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 0)!=0) { // 1 is the motor number
+	    
     }
 
     Serial.println("direction 1: " + String(direction_1) + " direction 2: " + String(direction_2));
