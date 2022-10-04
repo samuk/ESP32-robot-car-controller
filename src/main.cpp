@@ -7,8 +7,6 @@
 #include "device/device.h"
 #include "device/device_web_server.h"
 #include "device/device_global_variables.h"
-#include <ESPmDNS.h>
-#include <Smartcar.h>
 #include <Wire.h>
 #include <SimpleFOC.h>
 #include "SimpleFOCDrivers.h"
@@ -22,10 +20,15 @@ AsyncWebSocket ws("/ws");
 
 
 #define TARGET_I2C_ADDRESS 0x60
+#include <ESPmDNS.h>
+#include <Smartcar.h>
 #define I2C_SDA 21
 #define I2C_SCL 22
 #define I2C_Freq 100000UL
 
+
+// our RosmoESC's address...
+//#define TARGET_I2C_ADDRESS 0x60
 
 
 // global instance of commander - controller device version
@@ -57,15 +60,25 @@ void setup() {
     Serial.println("I2C Commander intialized.");
 }
 
+//Original spec: 
+//    messages are always 3 bytes long;
+//    every message starts with a value 97 - this is a start code of the message. 97 is ASCII 'a' I was just testing it with UART console, that's why I chose this value;
+//    the second byte represents the right joystick. If it is in the center we send 97 if it is up 98 ('b') and 99 ('c') if it is down;
+//    the third byte represents the left joystick. If it is in the center we send 97, if it is left 98 ('b') and 99 ('c') if it is right.
+//    If we loose the websocket connection we command robot to stop.
 
-//Orignial UART message
-uint8_t uart_message[3] = {97, 0, 0};
+
+//original:
+//uint8_t uart_message[3] = {97, 0, 0};
+//I2C version:
+uint8_t status[4];
 
 
 void loop()
 {
   delay(100);
-  Serial2.write(uart_message, 3);
+//original serial2.write(uart_message, 3);
+//I2C Version???
 }
 
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
@@ -91,19 +104,11 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   else if (type == WS_EVT_DISCONNECT)
   {
     Serial.println("Client disconnected");
-	  
-	  
-//Example I2C commander command that needs to replace the UART stuff below
-//uint8_t status[4];
-//int numRead = commander.readRegister(0, REG_STATUS, status, 4); // 0 is the motor number
-//if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 4)!=4) { // 0 is the motor number
-//}
-	  
-	  
-	  
-//do nothing if disconnected
-    uart_message[1] = 0 + 97;
-    uart_message[2] = 0 + 97;
+
+//Original
+//    uart_message[1] = 0 + 97;
+//    uart_message[2] = 0 + 97;
+// I2C version???
   }
   else if (type == WS_EVT_DATA) // receive text from client
   {
@@ -113,28 +118,34 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 
     if (direction_1 == 'U')
     {
-      uart_message[1] = 1 + 97;
+//Original      uart_message[1] = 1 + 97;
+//I2C version???
     }
     else if (direction_1 == 'D')
     {
-      uart_message[1] = 2 + 97;
+//Original      uart_message[1] = 2 + 97;
+//I2C version????
     }
     else
     {
-      uart_message[1] = 0 + 97;
+//Original      uart_message[1] = 0 + 97;
+//I2C version ???
     }
 
     if (direction_2 == 'L')
     {
-      uart_message[2] = 1 + 97;
+//Original      uart_message[2] = 1 + 97;
+//I2C Version ???
     }
     else if (direction_2 == 'R')
     {
-      uart_message[2] = 2 + 97;
+//Original      uart_message[2] = 2 + 97;
+//I2C version ??
     }
     else
     {
-      uart_message[2] = 0 + 97;
+//Original      uart_message[2] = 0 + 97;
+//I2C version ??
     }
 
     Serial.println("direction 1: " + String(direction_1) + " direction 2: " + String(direction_2));
