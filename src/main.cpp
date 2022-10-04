@@ -55,7 +55,7 @@ void setup() {
        Serial.println("I2C failed to initialize");
         delay(1000);
     }
-    commander.addI2CMotors(TARGET_I2C_ADDRESS, 1); // only one motor in my test setup
+    commander.addI2CMotors(TARGET_I2C_ADDRESS, 1); // only one motor in my test setup - *Need to add a second motor
     commander.init();
     Serial.println("I2C Commander intialized.");
 }
@@ -78,7 +78,7 @@ void loop()
 {
   delay(100);
 //original serial2.write(uart_message, 3);
-//I2C Version???
+//I2C Version - this is defining message lenth can I just ignore it?
 }
 
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
@@ -105,10 +105,14 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   {
     Serial.println("Client disconnected");
 
-//Original
+//Original - This is just stopping all motors Motor 0 is on left of robot, Motor 1 is on right
 //    uart_message[1] = 0 + 97;
 //    uart_message[2] = 0 + 97;
 // I2C version???
+	  }
+	  if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 0)!=0) { // 0 is the motor number
+	  if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 0)!=0) { // 1 is the motor number
+	  }
 	 	  
   }
   else if (type == WS_EVT_DATA) // receive text from client
@@ -117,16 +121,17 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
     char direction_1 = payload_string[2];
     char direction_2 = payload_string[0];
 
-    if (direction_1 == 'U')
+    if (direction_1 == 'U') //Forwards
     {
 //Original      uart_message[1] = 1 + 97;
 //I2C version???
     }
-    else if (direction_1 == 'D')
+    else if (direction_1 == 'D') //Backwards
     {
 //Original      uart_message[1] = 2 + 97;
 //I2C version????
-    if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 4)!=4) { // 0 is the motor number
+    if (commander.writeRegister(0, REG_TARGET, &targetSpeed, -4)!=-4 { // 0 is the motor number   
+    if (commander.writeRegister(1, REG_TARGET, &targetSpeed, -4)!=-4) { // 1 is the motor number
     }
 	 
     }
@@ -136,15 +141,20 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 //I2C version ???
     }
 
-    if (direction_2 == 'L')
+    if (direction_2 == 'L') //left
     {
 //Original      uart_message[2] = 1 + 97;
 //I2C Version ???
+    if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 4)!=4) { // 0 is the motor number   
+    if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 0)!=0) { // 1 is the motor number    
+	    
     }
-    else if (direction_2 == 'R')
+    else if (direction_2 == 'R') //right
     {
 //Original      uart_message[2] = 2 + 97;
 //I2C version ??
+    if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 0)!=0) { // 0 is the motor number   
+    if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 4)!=4) { // 1 is the motor number  
     }
     else
     {
