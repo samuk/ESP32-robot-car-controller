@@ -35,20 +35,20 @@ AsyncWebSocket ws("/ws");
 I2CCommanderMaster commander;
 
 void setup() {
-    // slow start - give RosmoESC a chance to boot up, serial to connect, etc...
-    delay(1000);
-
-{
-	 esp32_setup_peripherals();
-	 ws.onEvent(onWsEvent);
-	 ws_server.addHandler(&ws);
- 	 esp32_setup_web_server(&ws_server);
+    	// slow start - give RosmoESC a chance to boot up, serial to connect, etc...
+    	delay(1000);
+	 // this is a debug setup so initialize and wait for serial connection
+	Serial.begin(115200);
+	while (!Serial);
+	esp32_setup_peripherals();
+	ws.onEvent(onWsEvent);
+	ws_server.addHandler(&ws);
+	esp32_setup_web_server(&ws_server);
 }
 
 
- // this is a debug setup so initialize and wait for serial connection
-//Serial.begin(115200);
-//while (!Serial);
+
+
 
 
  while (!Wire.begin(I2C_SDA, I2C_SCL, 100000ul))  {    // standard wire pins 
@@ -69,8 +69,18 @@ void setup() {
 //    If we loose the websocket connection we command robot to stop.
 
 
-//original:
-//uint8_t uart_message[3] = {97, 0, 0};
+
+
+void setSpeeds(float speed1, float speed2) {
+  if (commander.writeRegister(0, REG_TARGET, &speed1, 4)!=4) { // 0 is the motor number
+	Serial.println("Error Motor 0");
+  }
+  if (commander.writeRegister(1, REG_TARGET, &speed2, 4)!=4) { // 1 is the motor number
+  	Serial.println("Error Motor 1");
+  }
+}
+
+
 //I2C version:
 uint8_t status[4];
 
@@ -78,8 +88,6 @@ uint8_t status[4];
 void loop()
 {
   delay(100);
-//original serial2.write(uart_message, 3);
-//I2C Version - this is defining message lenth can I just ignore it?
 }
 
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
@@ -105,69 +113,37 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   else if (type == WS_EVT_DISCONNECT)
   {
     Serial.println("Client disconnected");
-
-//Original - This is just stopping all motors Motor 0 is on left of robot, Motor 1 is on right
-//    uart_message[1] = 0 + 97;
-//    uart_message[2] = 0 + 97;
-// I2C version???
-	  }
-	  if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 0)!=0) { // 0 is the motor number
-	  if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 0)!=0) { // 1 is the motor number
-	  }
-	 	  
+    setSpeeds(0.0f, 0.0f);
   }
   else if (type == WS_EVT_DATA) // receive text from client
   {
-
     char direction_1 = payload_string[2];
     char direction_2 = payload_string[0];
 
     if (direction_1 == 'U') //Forwards
     {
-//Original      uart_message[1] = 1 + 97;
-//I2C version???
-	  if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 4)!=4) { // 0 is the motor number
-	  if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 4)!=4) { // 1 is the motor number
+	setSpeeds(1.0f, 1.0f);
     }
     else if (direction_1 == 'D') //Backwards
     {
-//Original      uart_message[1] = 2 + 97;
-//I2C version????
-    if (commander.writeRegister(0, REG_TARGET, &targetSpeed, -4)!=-4 { // 0 is the motor number   
-    if (commander.writeRegister(1, REG_TARGET, &targetSpeed, -4)!=-4) { // 1 is the motor number
-    }
-	 
+	setSpeeds(-1.0f, -1.0f);
     }
     else
     {
-//Original      uart_message[1] = 0 + 97;
-//I2C version ???  if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 0)!=0) { // 0 is the motor number
-	  if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 0)!=0) { // 1 is the motor number
-	      if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 0)!=0) { // 0 is the motor number
+    	setSpeeds(0.0f, 0.0f);
     }
 
     if (direction_2 == 'L') //left
     {
-//Original      uart_message[2] = 1 + 97;
-//I2C Version ???
-    if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 4)!=4) { // 0 is the motor number   
-    if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 0)!=0) { // 1 is the motor number    
-	    
+	setSpeeds(-1.0f, 1.0f);  
     }
     else if (direction_2 == 'R') //right
     {
-//Original      uart_message[2] = 2 + 97;
-//I2C version ??
-    if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 0)!=0) { // 0 is the motor number   
-    if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 4)!=4) { // 1 is the motor number  
+	setSpeeds(1.0f, -1.0f);
     }
     else
     {
-//Original      uart_message[2] = 0 + 97;
-//I2C version ??  
-	  if (commander.writeRegister(0, REG_TARGET, &targetSpeed, 0)!=0) { // 0 is the motor number
-	  if (commander.writeRegister(1, REG_TARGET, &targetSpeed, 0)!=0) { // 1 is the motor number
-	    
+	setSpeeds(0.0f, 0.0f);
     }
 
     Serial.println("direction 1: " + String(direction_1) + " direction 2: " + String(direction_2));
