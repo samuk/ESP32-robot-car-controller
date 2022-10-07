@@ -44,11 +44,6 @@ void setup() {
 	ws.onEvent(onWsEvent);
 	ws_server.addHandler(&ws);
 	esp32_setup_web_server(&ws_server);
-}
-
-
-
-
 
 
  while (!Wire.begin(I2C_SDA, I2C_SCL, 100000ul))  {    // standard wire pins 
